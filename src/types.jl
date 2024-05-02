@@ -49,7 +49,9 @@ end;
 function Base.show(io::IO, mime::MIME"text/plain", x::EPrimeLogFile)
 	println(io, "EPrimeLogFile")
 	hd = x.header
-	print(io, "  Experiment: $(hd.experiment), Subject: $(hd.subject), Session:$(hd.session), ")
+	println(io, "  Experiment: $(hd.experiment), Subject: $(hd.subject), Session: $(hd.session)")
+    println(io, "  Levels: $(x.levels.ids) Level names: $(x.levels.names)")
+
 end;
 
 function Base.show(io::IO, mime::MIME"text/plain", x::EPrimeLogFileHeader)

@@ -9,7 +9,7 @@ const re_experiment = r"Experiment:\s(\w+)"
 const re_datetime = r"SessionStartDateTimeUtc:\s(.+)";
 
 
-function data(eprime_file::EPrimeLogFile, level::Int;
+function data(eprime_file::EPrimeLogFile; level::Int,
 	varnames_without_dots::Bool = true)
 	level > 0 || throw(ArgumentError("level must be > 0"))
 	lvl = 0 #current
