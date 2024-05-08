@@ -1,6 +1,5 @@
 const eprime_fl_enc = enc"UTF-16LE"
 
-
 struct EPrimeLogFileHeader
 	experiment::String
 	session_start_date_time_utc::String
@@ -9,6 +8,7 @@ struct EPrimeLogFileHeader
 	level_names::Vector{String}
 	misc::AbstractDict
 end
+
 
 struct EPrimeLogFile
 	path::String
@@ -37,14 +37,16 @@ function EPrimeLogFileHeader(file_content::Vector{String})
 		subject, session, lvl_names, hdd)
 end
 
-function EPrimeLogFile(path::AbstractString)
+EPrimeLogFile(path::AbstractString) = read(EPrimeLogFile, path)
+
+function Base.read(::Type{EPrimeLogFile}, path::AbstractString)
 	content = open(path, "r") do fl
 		readlines(fl, eprime_fl_enc)
 	end
     hd = EPrimeLogFileHeader(content)
     levels = _levels(content, hd.level_names)
 	EPrimeLogFile(path, content, hd, levels)
-end;
+end
 
 function Base.show(io::IO, mime::MIME"text/plain", x::EPrimeLogFile)
 	println(io, "EPrimeLogFile")

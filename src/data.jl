@@ -9,7 +9,9 @@ const re_experiment = r"Experiment:\s(\w+)"
 const re_datetime = r"SessionStartDateTimeUtc:\s(.+)";
 
 
-function data(eprime_file::EPrimeLogFile; level::Int,
+function data(eprime_file::EPrimeLogFile;
+	level::Int,
+	subject_id::Bool = true, #FIXME
 	varnames_without_dots::Bool = true)
 	level > 0 || throw(ArgumentError("level must be > 0"))
 	lvl = 0 #current
@@ -17,18 +19,21 @@ function data(eprime_file::EPrimeLogFile; level::Int,
 	row = TRowData()
 	for l in eprime_file.content
 		if lvl == 0
-			# search for new level level
+			# search for new level
 			new_level = match(re_level, l)
 			if new_level != nothing
 				lvl = parse(Int, new_level.captures[1])
 			end
 		elseif match(re_frame_start, l) != nothing
 			row = TRowData()
+			if subject_id
+				row[:subject_id] = eprime_file.header.subject
+			end
 		elseif match(re_frame_end, l) != nothing
 			if length(row) > 0
 				push!(data, row)
-				row = TRowData()
 			end
+			row = TRowData()
 			lvl = 0
 		elseif lvl == level
 			# data

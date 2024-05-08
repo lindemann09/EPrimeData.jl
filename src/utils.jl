@@ -38,7 +38,7 @@ function unique_key(d::AbstractDict, key::Symbol)
 end
 
 function reconcile(dat::Vector{TRowData}; missing_value = missing)
-	"""harmonizing list of NamedTuples, so that all tuple have the same keys"""
+	"""harmonizing list of dict, so that all dicts have the same keys"""
 	columns = all_keys(dat)
 	rtn = TRowData[]
 	for row in dat
