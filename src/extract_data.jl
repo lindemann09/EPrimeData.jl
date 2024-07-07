@@ -9,8 +9,7 @@ const re_experiment = r"Experiment:\s(\w+)"
 const re_datetime = r"SessionStartDateTimeUtc:\s(.+)";
 
 
-function data(eprime_file::EPrimeLogFile;
-	level::Int,
+function tabular_data(eprime_file::EPrimeLogFile, level::Int;
 	subject_id::Bool = true, #FIXME
 	varnames_without_dots::Bool = true)
 	level > 0 || throw(ArgumentError("level must be > 0"))
@@ -21,7 +20,7 @@ function data(eprime_file::EPrimeLogFile;
 		if lvl == 0
 			# search for new level
 			new_level = match(re_level, l)
-			if new_level != nothing
+			if new_level !== nothing
 				lvl = parse(Int, new_level.captures[1])
 			end
 		elseif match(re_frame_start, l) != nothing

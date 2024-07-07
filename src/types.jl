@@ -9,19 +9,17 @@ struct EPrimeLogFileHeader
 	misc::AbstractDict
 end
 
-
 struct EPrimeLogFile
 	path::String
 	content::Vector{String}
-    header::EPrimeLogFileHeader
-    levels::@NamedTuple{ids::Vector{Int64}, names::Vector{String}}
+	header::EPrimeLogFileHeader
+	levels::@NamedTuple{ids::Vector{Int64}, names::Vector{String}}
 end
-
 
 function EPrimeLogFileHeader(file_content::Vector{String})
 	hdd = OrderedDict{Symbol, Any}()
 	hd_info = _header_info(file_content)
-    lvl_names = [x.second for x in hd_info if x.first == :LevelName] # level name vector
+	lvl_names = [x.second for x in hd_info if x.first == :LevelName] # level name vector
 	for kv in hd_info
 		if kv.first != :LevelName # ignore level names, because we have level name vevtor
 			key = unique_key(hdd, kv.first)
@@ -43,8 +41,8 @@ function Base.read(::Type{EPrimeLogFile}, path::AbstractString)
 	content = open(path, "r") do fl
 		readlines(fl, eprime_fl_enc)
 	end
-    hd = EPrimeLogFileHeader(content)
-    levels = _levels(content, hd.level_names)
+	hd = EPrimeLogFileHeader(content)
+	levels = _levels(content, hd.level_names)
 	EPrimeLogFile(path, content, hd, levels)
 end
 
@@ -52,7 +50,7 @@ function Base.show(io::IO, mime::MIME"text/plain", x::EPrimeLogFile)
 	println(io, "EPrimeLogFile")
 	hd = x.header
 	println(io, "  Experiment: $(hd.experiment), Subject: $(hd.subject), Session: $(hd.session)")
-    println(io, "  Levels: $(x.levels.ids) Level names: $(x.levels.names)")
+	println(io, "  Levels: $(x.levels.ids) Level names: $(x.levels.names)")
 
 end;
 
@@ -81,7 +79,7 @@ function _header_info(file_content::Vector{String})
 			break
 		elseif header_section
 			# search level
-			kv = key_value(l; varnames_without_dots=true)
+			kv = key_value(l; varnames_without_dots = true)
 			if kv isa Pair
 				push!(rtn, kv)
 			end
@@ -91,15 +89,15 @@ function _header_info(file_content::Vector{String})
 end
 
 function _levels(file_content::Vector{String}, level_names::Vector{String})
-    lvl = Set{String}()
-    # scan content for all unique levels
-    for l in file_content
-        x = match(re_level, l)
+	lvl = Set{String}()
+	# scan content for all unique levels
+	for l in file_content
+		x = match(re_level, l)
 		if x != nothing
 			push!(lvl, x.captures[1])
 		end
-    end
-    ids = sort([parse(Int, x) for x in lvl])
-    names = [level_names[x] for x in ids]
-    return NamedTuple((:ids => ids, :names => names))
+	end
+	ids = sort([parse(Int, x) for x in lvl])
+	names = [level_names[x] for x in ids]
+	return NamedTuple((:ids => ids, :names => names))
 end

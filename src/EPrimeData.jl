@@ -4,11 +4,11 @@ using StringEncodings
 using OrderedCollections
 
 export EPrimeLogFile,
-        data
+        tabular_data
 
 # Write your package code here.
 include("types.jl")
 include("utils.jl")
-include("data.jl")
+include("extract_data.jl")
 
 end
