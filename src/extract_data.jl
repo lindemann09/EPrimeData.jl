@@ -10,7 +10,7 @@ const re_datetime = r"SessionStartDateTimeUtc:\s(.+)";
 
 
 function tabular_data(eprime_file::EPrimeLogFile, level::Int;
-	subject_id::Bool = true, #FIXME
+	subject_id::Bool = true,
 	varnames_without_dots::Bool = true)
 	level > 0 || throw(ArgumentError("level must be > 0"))
 	lvl = 0 #current
@@ -29,7 +29,7 @@ function tabular_data(eprime_file::EPrimeLogFile, level::Int;
 				row[:subject_id] = eprime_file.header.subject
 			end
 		elseif match(re_frame_end, l) != nothing
-			if length(row) > 0
+			if length(row) > 0 && lvl == level
 				push!(data, row)
 			end
 			row = TRowData()
